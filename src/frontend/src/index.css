@@ -1,0 +1,409 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --radius: 0.75rem;
+
+    /* FitTrack Dark Theme — Black/White/Grey only */
+    --background: 0.08 0 0;
+    --foreground: 0.96 0 0;
+    --card: 0.13 0 0;
+    --card-foreground: 0.96 0 0;
+    --popover: 0.13 0 0;
+    --popover-foreground: 0.96 0 0;
+    --primary: 0.96 0 0;
+    --primary-foreground: 0.08 0 0;
+    --secondary: 0.2 0 0;
+    --secondary-foreground: 0.88 0 0;
+    --muted: 0.18 0 0;
+    --muted-foreground: 0.55 0 0;
+    --accent: 0.22 0 0;
+    --accent-foreground: 0.96 0 0;
+    --destructive: 0.4 0.15 25;
+    --destructive-foreground: 0.96 0 0;
+    --border: 0.24 0 0;
+    --input: 0.22 0 0;
+    --ring: 0.7 0 0;
+
+    /* Custom fitness tokens */
+    --trained: 0.42 0.12 145;
+    --trained-foreground: 0.96 0 0;
+    --untrained: 0.38 0.13 25;
+    --untrained-foreground: 0.96 0 0;
+    --today-ring: 0.88 0 0;
+
+    --chart-1: 0.646 0.222 41.116;
+    --chart-2: 0.6 0.118 184.704;
+    --chart-3: 0.398 0.07 227.392;
+    --chart-4: 0.828 0.189 84.429;
+    --chart-5: 0.769 0.188 70.08;
+    --sidebar: 0.1 0 0;
+    --sidebar-foreground: 0.96 0 0;
+    --sidebar-primary: 0.96 0 0;
+    --sidebar-primary-foreground: 0.08 0 0;
+    --sidebar-accent: 0.18 0 0;
+    --sidebar-accent-foreground: 0.96 0 0;
+    --sidebar-border: 0.2 0 0;
+    --sidebar-ring: 0.6 0 0;
+  }
+
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+
+  html {
+    color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+    height: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "General Sans", system-ui, sans-serif;
+    height: 100%;
+    overscroll-behavior: none;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #root {
+    height: 100%;
+    min-height: 100dvh;
+  }
+}
+
+/* Slide animations for calendar month transitions */
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes slideOutToLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-60%);
+    opacity: 0;
+  }
+}
+@keyframes slideOutToRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(60%);
+    opacity: 0;
+  }
+}
+@keyframes fadeInUp {
+  from {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.slide-in-right {
+  animation: slideInFromRight 0.30s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.slide-in-left {
+  animation: slideInFromLeft 0.30s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.slide-out-left {
+  animation: slideOutToLeft 0.20s ease-in forwards;
+}
+.slide-out-right {
+  animation: slideOutToRight 0.20s ease-in forwards;
+}
+.fade-in-up {
+  animation: fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.fade-in {
+  animation: fadeIn 0.25s ease both;
+}
+
+/* Sheet overlay backdrop */
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(2px);
+  z-index: 40;
+  animation: fadeIn 0.20s ease;
+}
+
+/* Sheet slide-up */
+@keyframes sheetSlideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes sheetSlideDown {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+.sheet-slide-up {
+  animation: sheetSlideUp 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.sheet-slide-down {
+  animation: sheetSlideDown 0.22s cubic-bezier(0.55, 0, 1, 0.45) both;
+}
+
+/* Haptic-like press feedback */
+.press-scale {
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+.press-scale:active {
+  transform: scale(0.95);
+  opacity: 0.85;
+}
+
+/* ─── Login Background ───────────────────────────────────────────────────── */
+
+.login-bg {
+  position: relative;
+  overflow: hidden;
+  background: oklch(0.06 0 0);
+  /* Subtle dot grid overlay via SVG data URI */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Ccircle cx='1' cy='1' r='0.75' fill='oklch(1 0 0 / 0.035)'/%3E%3C/svg%3E"),
+    radial-gradient(
+      ellipse 100% 55% at 50% 0%,
+      oklch(0.14 0 0) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 70% 40% at 80% 90%,
+      oklch(0.11 0 0) 0%,
+      transparent 60%
+    ), oklch(0.06 0 0);
+}
+
+/* Orb 1 — large, top-left, slow drift */
+@keyframes orbDrift1 {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -20px) scale(1.04);
+  }
+  66% {
+    transform: translate(-18px, 28px) scale(0.97);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+/* Orb 2 — medium, bottom-right, slower */
+@keyframes orbDrift2 {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  40% {
+    transform: translate(-24px, 16px) scale(1.06);
+  }
+  75% {
+    transform: translate(20px, -30px) scale(0.96);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+/* Orb 3 — small, center, breathing pulse */
+@keyframes orbBreath {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+}
+
+/* Top glow breathing */
+@keyframes glowBreathe {
+  0% {
+    opacity: 0.5;
+    transform: scaleY(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scaleY(1.08);
+  }
+  100% {
+    opacity: 0.5;
+    transform: scaleY(1);
+  }
+}
+
+/* Slow horizontal sweep for the noise layer */
+@keyframes noiseDrift {
+  0% {
+    transform: translateX(0px);
+  }
+  100% {
+    transform: translateX(-32px);
+  }
+}
+
+.login-orb-1 {
+  position: absolute;
+  width: 480px;
+  height: 480px;
+  border-radius: 50%;
+  top: -140px;
+  left: -100px;
+  background: radial-gradient(
+    circle,
+    oklch(0.22 0 0 / 0.55) 0%,
+    transparent 70%
+  );
+  animation: orbDrift1 22s ease-in-out infinite;
+  animation-fill-mode: both;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.login-orb-2 {
+  position: absolute;
+  width: 560px;
+  height: 560px;
+  border-radius: 50%;
+  bottom: -180px;
+  right: -140px;
+  background: radial-gradient(circle, oklch(0.18 0 0 / 0.5) 0%, transparent 68%);
+  animation: orbDrift2 28s ease-in-out infinite;
+  animation-fill-mode: both;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.login-orb-3 {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  top: 38%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, oklch(0.28 0 0 / 0.3) 0%, transparent 65%);
+  animation: orbBreath 8s ease-in-out infinite;
+  animation-fill-mode: both;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+.login-glow-top {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  height: 220px;
+  background: radial-gradient(
+    ellipse 80% 60% at 50% 0%,
+    oklch(0.32 0 0 / 0.6) 0%,
+    transparent 70%
+  );
+  animation: glowBreathe 6s ease-in-out infinite;
+  animation-fill-mode: both;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+.login-noise {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Ccircle cx='1' cy='1' r='0.7' fill='white' fill-opacity='0.028'/%3E%3C/svg%3E");
+  background-size: 32px 32px;
+  animation: noiseDrift 20s linear infinite;
+  pointer-events: none;
+  opacity: 1;
+}
+
+/* ─── Login Button ───────────────────────────────────────────────────────── */
+
+/* Login button shimmer sweep */
+@keyframes loginShimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.login-btn {
+  position: relative;
+  overflow: hidden;
+  outline: none;
+  transition: transform 0.12s ease, box-shadow 0.2s ease;
+  box-shadow: 0 1px 0 oklch(1 0 0 / 0.08) inset, 0 -1px 0 oklch(0 0 0 / 0.12)
+    inset, 0 4px 20px oklch(0 0 0 / 0.5);
+}
+.login-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    oklch(1 0 0 / 0.15) 50%,
+    transparent 60%
+  );
+  background-size: 200% 100%;
+  animation: loginShimmer 3.5s ease infinite;
+  pointer-events: none;
+}
+.login-btn:focus-visible {
+  box-shadow: 0 0 0 3px oklch(0.08 0 0), 0 0 0 5px oklch(0.96 0 0), 0 4px 20px
+    oklch(0 0 0 / 0.5);
+}
+.login-btn:hover:not(:disabled) {
+  box-shadow: 0 1px 0 oklch(1 0 0 / 0.1) inset, 0 -1px 0 oklch(0 0 0 / 0.12)
+    inset, 0 6px 28px oklch(0 0 0 / 0.6);
+}
