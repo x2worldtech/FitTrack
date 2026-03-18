@@ -7,14 +7,6 @@ interface HydrationRecord {
   totalMl: bigint;
 }
 
-interface HydrationActor {
-  saveHydrationGoal(goalMl: bigint): Promise<void>;
-  getHydrationGoal(): Promise<bigint>;
-  addWaterIntake(date: string, amount: bigint): Promise<bigint>;
-  getWaterIntake(date: string): Promise<bigint>;
-  getHydrationHistory(): Promise<HydrationRecord[]>;
-}
-
 export interface ExtendedDayEntry extends DayEntry {
   creatineGrams: bigint;
   proteinGrams: bigint;
@@ -123,10 +115,15 @@ export function useHydrationGoal() {
     queryKey: ["hydrationGoal"],
     queryFn: async () => {
       if (!actor) return BigInt(0);
-      return (actor as unknown as HydrationActor).getHydrationGoal();
+      try {
+        return await (actor as any).getHydrationGoal();
+      } catch {
+        return BigInt(0);
+      }
     },
     enabled: !!actor && !isFetching,
-    staleTime: Number.POSITIVE_INFINITY,
+    staleTime: 60_000,
+    retry: 1,
   });
 }
 
@@ -136,9 +133,7 @@ export function useSaveHydrationGoal() {
   return useMutation({
     mutationFn: async (goalMl: number) => {
       if (!actor) throw new Error("No actor");
-      await (actor as unknown as HydrationActor).saveHydrationGoal(
-        BigInt(goalMl),
-      );
+      await (actor as any).saveHydrationGoal(BigInt(goalMl));
     },
     onMutate: async (goalMl) => {
       await queryClient.cancelQueries({ queryKey: ["hydrationGoal"] });
@@ -162,7 +157,11 @@ export function useWaterIntake(date: string) {
     queryKey: ["waterIntake", date],
     queryFn: async () => {
       if (!actor) return BigInt(0);
-      return (actor as unknown as HydrationActor).getWaterIntake(date);
+      try {
+        return await (actor as any).getWaterIntake(date);
+      } catch {
+        return BigInt(0);
+      }
     },
     enabled: !!actor && !isFetching,
   });
@@ -174,10 +173,7 @@ export function useAddWaterIntake() {
   return useMutation({
     mutationFn: async ({ date, amount }: { date: string; amount: number }) => {
       if (!actor) throw new Error("No actor");
-      return (actor as unknown as HydrationActor).addWaterIntake(
-        date,
-        BigInt(amount),
-      );
+      return (actor as any).addWaterIntake(date, BigInt(amount));
     },
     onMutate: async ({ date, amount }) => {
       await queryClient.cancelQueries({ queryKey: ["waterIntake", date] });
@@ -204,7 +200,11 @@ export function useHydrationHistory() {
     queryKey: ["hydrationHistory"],
     queryFn: async () => {
       if (!actor) return [];
-      return (actor as unknown as HydrationActor).getHydrationHistory();
+      try {
+        return await (actor as any).getHydrationHistory();
+      } catch {
+        return [];
+      }
     },
     enabled: !!actor && !isFetching,
   });

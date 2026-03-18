@@ -139,14 +139,20 @@ export default function StatisticsScreen({ onBack }: StatisticsScreenProps) {
 
   const supplementStats = useMemo(() => {
     const typedEntries = entries as ExtendedDayEntry[];
-    const creatineDays = typedEntries.filter((e) => e.creatine);
-    const proteinDays = typedEntries.filter((e) => e.protein);
 
-    const totalCreatineG = creatineDays.reduce(
+    // Count entries based on actual gram values (not boolean flags)
+    const creatineDaysCount = typedEntries.filter(
+      (e) => Number(e.creatineGrams ?? 0) > 0,
+    ).length;
+    const proteinDaysCount = typedEntries.filter(
+      (e) => Number(e.proteinGrams ?? 0) > 0,
+    ).length;
+
+    const totalCreatineG = typedEntries.reduce(
       (sum, e) => sum + Number(e.creatineGrams ?? 0),
       0,
     );
-    const totalProteinG = proteinDays.reduce(
+    const totalProteinG = typedEntries.reduce(
       (sum, e) => sum + Number(e.proteinGrams ?? 0),
       0,
     );
@@ -176,8 +182,8 @@ export default function StatisticsScreen({ onBack }: StatisticsScreenProps) {
     }
 
     return {
-      creatineDays: creatineDays.length,
-      proteinDays: proteinDays.length,
+      creatineDays: creatineDaysCount,
+      proteinDays: proteinDaysCount,
       totalCreatineG,
       totalProteinG,
       avgCreatinePerWeek,
