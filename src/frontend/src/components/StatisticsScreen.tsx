@@ -8,7 +8,11 @@ import {
 } from "lucide-react";
 import { useMemo } from "react";
 import { useLanguage } from "../context/LanguageContext";
-import { useGetAllEntries, useHydrationHistory } from "../hooks/useQueries";
+import {
+  type ExtendedDayEntry,
+  useGetAllEntries,
+  useHydrationHistory,
+} from "../hooks/useQueries";
 
 interface StatisticsScreenProps {
   onBack: () => void;
@@ -42,7 +46,7 @@ export default function StatisticsScreen({ onBack }: StatisticsScreenProps) {
   const shortMonths = months.map((m: string) => m.slice(0, 3));
 
   const trainingStats = useMemo(() => {
-    const trained = entries.filter((e) => e.trained);
+    const trained = (entries as ExtendedDayEntry[]).filter((e) => e.trained);
     const total = trained.length;
     const currentYear = new Date().getFullYear();
 
@@ -134,15 +138,16 @@ export default function StatisticsScreen({ onBack }: StatisticsScreenProps) {
   }, [hydrationHistory]);
 
   const supplementStats = useMemo(() => {
-    const creatineDays = entries.filter((e) => e.creatine);
-    const proteinDays = entries.filter((e) => e.protein);
+    const typedEntries = entries as ExtendedDayEntry[];
+    const creatineDays = typedEntries.filter((e) => e.creatine);
+    const proteinDays = typedEntries.filter((e) => e.protein);
 
     const totalCreatineG = creatineDays.reduce(
-      (sum, e) => sum + Number((e as any).creatineGrams ?? 0),
+      (sum, e) => sum + Number(e.creatineGrams ?? 0),
       0,
     );
     const totalProteinG = proteinDays.reduce(
-      (sum, e) => sum + Number((e as any).proteinGrams ?? 0),
+      (sum, e) => sum + Number(e.proteinGrams ?? 0),
       0,
     );
 
@@ -153,8 +158,8 @@ export default function StatisticsScreen({ onBack }: StatisticsScreenProps) {
     let avgProteinPerMonth = 0;
     let avgProteinPerYear = 0;
 
-    if (entries.length > 0) {
-      const sortedDates = entries.map((e) => e.date).sort();
+    if (typedEntries.length > 0) {
+      const sortedDates = typedEntries.map((e) => e.date).sort();
       const firstDate = new Date(sortedDates[0]);
       const now = new Date();
       const diffMs = now.getTime() - firstDate.getTime();
@@ -390,14 +395,14 @@ export default function StatisticsScreen({ onBack }: StatisticsScreenProps) {
                 </p>
                 <div className="grid grid-cols-2 gap-2">
                   <StatCard
-                    label={t("daysTaken")}
-                    value={`${supplementStats.creatineDays}`}
-                    sub={t("daysTotal")}
-                  />
-                  <StatCard
                     label={t("creatineTotal")}
                     value={fmtG(supplementStats.totalCreatineG)}
                     sub={t("totalAmount")}
+                  />
+                  <StatCard
+                    label={t("daysTaken")}
+                    value={`${supplementStats.creatineDays}`}
+                    sub={t("daysTotal")}
                   />
                   <StatCard
                     label={t("avgPerWeek")}
@@ -423,14 +428,14 @@ export default function StatisticsScreen({ onBack }: StatisticsScreenProps) {
                 </p>
                 <div className="grid grid-cols-2 gap-2">
                   <StatCard
-                    label={t("daysTaken")}
-                    value={`${supplementStats.proteinDays}`}
-                    sub={t("daysTotal")}
-                  />
-                  <StatCard
                     label={t("proteinTotal")}
                     value={fmtG(supplementStats.totalProteinG)}
                     sub={t("totalAmount")}
+                  />
+                  <StatCard
+                    label={t("daysTaken")}
+                    value={`${supplementStats.proteinDays}`}
+                    sub={t("daysTotal")}
                   />
                   <StatCard
                     label={t("avgPerWeek")}

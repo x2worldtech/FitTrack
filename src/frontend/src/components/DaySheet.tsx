@@ -12,13 +12,8 @@ import {
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import type { DayEntry } from "../backend.d.ts";
 import { useLanguage } from "../context/LanguageContext";
-
-interface ExtendedDayEntry extends DayEntry {
-  creatineGrams?: bigint;
-  proteinGrams?: bigint;
-}
+import type { ExtendedDayEntry } from "../hooks/useQueries";
 
 interface DaySheetProps {
   date: string | null;

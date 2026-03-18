@@ -23,14 +23,13 @@ import SettingsScreen from "./components/SettingsScreen";
 import StatisticsScreen from "./components/StatisticsScreen";
 import { LanguageProvider, useLanguage } from "./context/LanguageContext";
 import { useInternetIdentity } from "./hooks/useInternetIdentity";
-import { useGetAllEntries, useSaveDayEntry } from "./hooks/useQueries";
+import {
+  type ExtendedDayEntry,
+  useGetAllEntries,
+  useSaveDayEntry,
+} from "./hooks/useQueries";
 
 type AppView = "calendar" | "hydration" | "statistics" | "settings";
-
-interface ExtendedDayEntry extends DayEntry {
-  creatineGrams?: bigint;
-  proteinGrams?: bigint;
-}
 
 // ─── Login Screen ─────────────────────────────────────────────────────────
 function LoginScreen() {

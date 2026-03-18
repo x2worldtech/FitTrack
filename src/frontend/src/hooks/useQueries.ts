@@ -15,9 +15,9 @@ interface HydrationActor {
   getHydrationHistory(): Promise<HydrationRecord[]>;
 }
 
-interface ExtendedDayEntry extends DayEntry {
-  creatineGrams?: bigint;
-  proteinGrams?: bigint;
+export interface ExtendedDayEntry extends DayEntry {
+  creatineGrams: bigint;
+  proteinGrams: bigint;
 }
 
 export function useGetAllEntries() {
@@ -126,6 +126,7 @@ export function useHydrationGoal() {
       return (actor as unknown as HydrationActor).getHydrationGoal();
     },
     enabled: !!actor && !isFetching,
+    staleTime: Number.POSITIVE_INFINITY,
   });
 }
 
